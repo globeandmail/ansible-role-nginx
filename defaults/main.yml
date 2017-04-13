@@ -1,0 +1,3 @@
+---
+nginx_sites_available_dir: nginx/sites-available
+nginx_confd_dir: nginx/conf.d 
