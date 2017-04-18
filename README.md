@@ -5,6 +5,9 @@ This role installs Nginx along with config files.
 Default config files will be installed by the role if the following variables are not defined in the playbook.
 
 ## Required Variables
+The following variables are required to customize the Nginx install. The variables should point to the location of the customized files.
+
+For example, 
 
 group_vars/dev.yml
 ```bash
