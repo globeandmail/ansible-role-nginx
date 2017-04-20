@@ -28,10 +28,16 @@
   notify: restart nginx
   tags: config
 
+- name: Debian | remove the default modules-enabled/default
+  file: >
+   path=/etc/nginx/modules-enabled/default
+   state=absent
+  notify: restart nginx
+  tags: config
 
 - name: Debian | Create the main configuration file
   copy: >
-   src="nginx/nginx.conf"
+   src="{{ nginx_conf }}"
    dest=/etc/nginx/nginx.conf
    owner=root group=root mode=0644
   notify: restart nginx
@@ -63,6 +69,32 @@
   notify: restart nginx
   tags: config
 
+##
+- name: Debian | Modules Available Location
+  debug: msg="{{ nginx_sites_available_dir }}"
+  when: nginx_modules_available_dir is defined
+
+- name: Debian | Create /etc/nginx/modules-available
+  copy: >
+    src="{{ item }}"
+    dest="/etc/nginx/modules-available/{{ item | basename }}"
+    owner=root group=root mode=0644
+  with_fileglob: "{{ nginx_modules_available_dir }}/*"
+  when: nginx_modules_available_dir is defined
+  notify: restart nginx
+  tags: config
+
+- name: Debian | Create symlink from modules-available to modules-enabled
+  file: >
+   src="/etc/nginx/modules-available/{{ item | basename }}"
+   dest="/etc/nginx/modules-enabled/{{ item | basename }}"
+   state=link
+  with_fileglob: "{{ nginx_modules_available_dir }}/*"
+  when: nginx_modules_available_dir is defined
+  notify: restart nginx
+  tags: config
+
+##
 
 - name: Debian | Conf.d source
   debug: msg="{{ nginx_confd_dir }}"

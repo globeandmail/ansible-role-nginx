@@ -1,3 +1,6 @@
 ---
-nginx_sites_available_dir: nginx/sites-available
-nginx_confd_dir: nginx/conf.d 
+nginx_conf: nginx.conf
+nginx_sites_available_dir: sites-available
+nginx_confd_dir: conf.d
+nginx_modules_available_dir: modules_available
+ 
