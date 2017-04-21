@@ -1,41 +1,38 @@
 ---
-- name: Debian | Make sure the ansible required dependencies are installed
+- name: Ubuntu 14 | Make sure the ansible required dependencies are installed
   apt: >
     pkg=python-pycurl
     update_cache=yes
     state=latest
   tags: install
 
-
-- name: Debian | Add the nginx PPA repository
+- name: Ubuntu 14 | Add the nginx PPA repository
   apt_repository: >
     repo=ppa:nginx/stable
   tags: install
 
-
-- name: Debian | Install nginx
+- name: Ubuntu 14 | Install nginx
   apt: >
     pkg=nginx
     update_cache=yes
     state=latest
   tags: install
 
-
-- name: Debian | remove the default sites-enabled/default
+- name: Ubuntu 14 | remove the default sites-enabled/default
   file: >
    path=/etc/nginx/sites-enabled/default
    state=absent
   notify: restart nginx
   tags: config
 
-- name: Debian | remove the default modules-enabled/default
+- name: Ubuntu 14 | remove the default modules-enabled/default
   file: >
    path=/etc/nginx/modules-enabled/default
    state=absent
   notify: restart nginx
   tags: config
 
-- name: Debian | Create the main configuration file
+- name: Ubuntu 14 | Create the main configuration file
   copy: >
    src="{{ nginx_conf }}"
    dest=/etc/nginx/nginx.conf
@@ -43,12 +40,11 @@
   notify: restart nginx
   tags: config
 
-
-- name: Debian | Sites Available Location
+- name: Ubuntu 14 | Sites Available Location
   debug: msg="{{ nginx_sites_available_dir }}"
   when: nginx_sites_available_dir is defined
 
-- name: Debian | Create /etc/nginx/sites-available
+- name: Ubuntu 14 | Create /etc/nginx/sites-available
   copy: >
     src="{{ item }}"
     dest="/etc/nginx/sites-available/{{ item | basename }}"
@@ -58,8 +54,7 @@
   notify: restart nginx
   tags: config
 
-
-- name: Debian | Create symlink from sites-available to sites-enabled
+- name: Ubuntu 14 | Create symlink from sites-available to sites-enabled
   file: >
    src="/etc/nginx/sites-available/{{ item | basename }}"
    dest="/etc/nginx/sites-enabled/{{ item | basename }}"
@@ -69,12 +64,11 @@
   notify: restart nginx
   tags: config
 
-##
-- name: Debian | Modules Available Location
+- name: Ubuntu 14 | Modules Available Location
   debug: msg="{{ nginx_sites_available_dir }}"
   when: nginx_modules_available_dir is defined
 
-- name: Debian | Create /etc/nginx/modules-available
+- name: Ubuntu 14 | Install dynamic modules in /etc/nginx/modules-available
   copy: >
     src="{{ item }}"
     dest="/etc/nginx/modules-available/{{ item | basename }}"
@@ -84,7 +78,7 @@
   notify: restart nginx
   tags: config
 
-- name: Debian | Create symlink from modules-available to modules-enabled
+- name: Ubuntu 14 | Create symlink from modules-available to modules-enabled
   file: >
    src="/etc/nginx/modules-available/{{ item | basename }}"
    dest="/etc/nginx/modules-enabled/{{ item | basename }}"
@@ -94,13 +88,11 @@
   notify: restart nginx
   tags: config
 
-##
-
-- name: Debian | Conf.d source
+- name: Ubuntu 14 | Conf.d source
   debug: msg="{{ nginx_confd_dir }}"
   when: nginx_confd_dir is defined
 
-- name: Debian | Copy conf.d config files from local directory
+- name: Ubuntu 14 | Copy conf.d config files from local directory
   copy: >
    src="{{ item }}"
    dest="/etc/nginx/conf.d/{{ item | basename }}"
@@ -109,8 +101,7 @@
   when: nginx_confd_dir is defined
   tags: config
 
-
-- name: Debian | Create Directories for SSL Certs
+- name: Ubuntu 14 | Create Directories for SSL Certs
   file: >
    path={{item}}
    state=directory
@@ -121,8 +112,7 @@
   when: nginx_ssl_keys is defined
   tags: config
 
-
-- name: Debian | Copy SSL Keys
+- name: Ubuntu 14 | Copy SSL Keys
   copy: >
    src={{item}}
    dest=/etc/nginx/ssl/key/{{item|basename}}
@@ -132,8 +122,7 @@
   when: nginx_ssl_keys is defined
   tags: config
 
-
-- name: Debian | Copy SSL Certs
+- name: Ubuntu 14 | Copy SSL Certs
   copy: >
    src={{item}}
    dest=/etc/nginx/ssl/crt/{{item|basename}}
