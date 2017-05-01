@@ -11,40 +11,60 @@
     repo=ppa:nginx/stable
   tags: install
 
-- name: Ubuntu 14 | Install nginx
+- name: Ubuntu 14 | Install Nginx
   apt: >
     pkg=nginx
     update_cache=yes
     state=latest
   tags: install
 
-- name: Ubuntu 14 | remove the default sites-enabled/default
+- name: Ubuntu 14 | Clean sites-enabled directory
   file: >
-   path=/etc/nginx/sites-enabled/default
+   path=/etc/nginx/sites-enabled/
    state=absent
   notify: restart nginx
   tags: config
 
-- name: Ubuntu 14 | remove the default modules-enabled/default
+- name: Ubuntu 14 | Clean sites-available directory
   file: >
-   path=/etc/nginx/modules-enabled/default
+   path=/etc/nginx/sites-available/
    state=absent
   notify: restart nginx
   tags: config
+
+#- name: Ubuntu 14 | Clean modules-enabled/default
+#  file: >
+#   path=/etc/nginx/modules-enabled/default
+#   state=absent
+#  notify: restart nginx
+#  tags: config
+
+#- name: Ubuntu 14 | Debug nginx_conf
+#  debug: msg="{{ nginx_conf }} <---"
+#  when: nginx_conf is defined
 
 - name: Ubuntu 14 | Create the main configuration file
   copy: >
    src="{{ nginx_conf }}"
    dest=/etc/nginx/nginx.conf
    owner=root group=root mode=0644
+  when: nginx_conf is defined
   notify: restart nginx
   tags: config
 
-- name: Ubuntu 14 | Sites Available Location
-  debug: msg="{{ nginx_sites_available_dir }}"
-  when: nginx_sites_available_dir is defined
+#- name: Ubuntu 14 | Sites Available Location
+#  debug: msg="{{ nginx_sites_available_dir }}"
+#  when: nginx_sites_available_dir is defined
 
-- name: Ubuntu 14 | Create /etc/nginx/sites-available
+- name: Ubuntu 14 | Create Nginx directories
+  file: 
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - /etc/nginx/sites-available
+    - /etc/nginx/sites-enabled
+
+- name: Ubuntu 14 | Copy sites-available
   copy: >
     src="{{ item }}"
     dest="/etc/nginx/sites-available/{{ item | basename }}"
@@ -68,29 +88,9 @@
   debug: msg="{{ nginx_sites_available_dir }}"
   when: nginx_modules_available_dir is defined
 
-- name: Ubuntu 14 | Install dynamic modules in /etc/nginx/modules-available
-  copy: >
-    src="{{ item }}"
-    dest="/etc/nginx/modules-available/{{ item | basename }}"
-    owner=root group=root mode=0644
-  with_fileglob: "{{ nginx_modules_available_dir }}/*"
-  when: nginx_modules_available_dir is defined
-  notify: restart nginx
-  tags: config
-
-- name: Ubuntu 14 | Create symlink from modules-available to modules-enabled
-  file: >
-   src="/etc/nginx/modules-available/{{ item | basename }}"
-   dest="/etc/nginx/modules-enabled/{{ item | basename }}"
-   state=link
-  with_fileglob: "{{ nginx_modules_available_dir }}/*"
-  when: nginx_modules_available_dir is defined
-  notify: restart nginx
-  tags: config
-
-- name: Ubuntu 14 | Conf.d source
-  debug: msg="{{ nginx_confd_dir }}"
-  when: nginx_confd_dir is defined
+#- name: Ubuntu 14 | Conf.d source
+#  debug: msg="{{ nginx_confd_dir }}"
+#  when: nginx_confd_dir is defined
 
 - name: Ubuntu 14 | Copy conf.d config files from local directory
   copy: >
