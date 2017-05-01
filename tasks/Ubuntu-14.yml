@@ -23,6 +23,7 @@
    path=/etc/nginx/sites-enabled/
    state=absent
   notify: restart nginx
+  when: nginx_sites_avilable_dir is defined
   tags: config
 
 - name: Ubuntu 14 | Clean sites-available directory
@@ -30,17 +31,11 @@
    path=/etc/nginx/sites-available/
    state=absent
   notify: restart nginx
+  when: nginx_sites_available_dir is defined
   tags: config
 
-#- name: Ubuntu 14 | Clean modules-enabled/default
-#  file: >
-#   path=/etc/nginx/modules-enabled/default
-#   state=absent
-#  notify: restart nginx
-#  tags: config
-
 #- name: Ubuntu 14 | Debug nginx_conf
-#  debug: msg="{{ nginx_conf }} <---"
+#  debug: msg="{{ nginx_conf }}"
 #  when: nginx_conf is defined
 
 - name: Ubuntu 14 | Create the main configuration file
