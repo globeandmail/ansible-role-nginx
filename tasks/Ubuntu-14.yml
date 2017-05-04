@@ -34,10 +34,6 @@
   when: nginx_sites_available_dir is defined
   tags: config
 
-#- name: Ubuntu 14 | Debug nginx_conf
-#  debug: msg="{{ nginx_conf }}"
-#  when: nginx_conf is defined
-
 - name: Ubuntu 14 | Create the main configuration file
   copy: >
    src="{{ nginx_conf }}"
@@ -46,10 +42,6 @@
   when: nginx_conf is defined
   notify: restart nginx
   tags: config
-
-#- name: Ubuntu 14 | Sites Available Location
-#  debug: msg="{{ nginx_sites_available_dir }}"
-#  when: nginx_sites_available_dir is defined
 
 - name: Ubuntu 14 | Create Nginx directories
   file: 
@@ -60,7 +52,7 @@
     - /etc/nginx/sites-enabled
 
 - name: Ubuntu 14 | Copy sites-available
-  copy: >
+  template: >
     src="{{ item }}"
     dest="/etc/nginx/sites-available/{{ item | basename }}"
     owner=root group=root mode=0644
