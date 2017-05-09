@@ -1,24 +1,24 @@
 ---
-- name: Ubuntu 14 | Make sure the ansible required dependencies are installed
+- name: Ubuntu 12 | Make sure the ansible required dependencies are installed
   apt: >
     pkg=python-pycurl
     update_cache=yes
     state=latest
   tags: install
 
-- name: Ubuntu 14 | Add the nginx PPA repository
+- name: Ubuntu 12 | Add the nginx PPA repository
   apt_repository: >
     repo=ppa:nginx/stable
   tags: install
 
-- name: Ubuntu 14 | Install Nginx
+- name: Ubuntu 12 | Install Nginx
   apt: >
     pkg=nginx
     update_cache=yes
     state=latest
   tags: install
 
-- name: Ubuntu 14 | Clean sites-enabled directory
+- name: Ubuntu 12 | Clean sites-enabled directory
   file: >
    path=/etc/nginx/sites-enabled/
    state=absent
@@ -26,7 +26,7 @@
   when: nginx_sites_avilable_dir is defined
   tags: config
 
-- name: Ubuntu 14 | Clean sites-available directory
+- name: Ubuntu 12 | Clean sites-available directory
   file: >
    path=/etc/nginx/sites-available/
    state=absent
@@ -34,7 +34,7 @@
   when: nginx_sites_available_dir is defined
   tags: config
 
-- name: Ubuntu 14 | Create the main configuration file
+- name: Ubuntu 12 | Create the main configuration file
   copy: >
    src="{{ nginx_conf }}"
    dest=/etc/nginx/nginx.conf
@@ -43,7 +43,7 @@
   notify: restart nginx
   tags: config
 
-- name: Ubuntu 14 | Create Nginx directories
+- name: Ubuntu 12 | Create Nginx directories
   file: 
     path: "{{ item }}"
     state: directory
@@ -51,7 +51,7 @@
     - /etc/nginx/sites-available
     - /etc/nginx/sites-enabled
 
-- name: Ubuntu 14 | Copy sites-available
+- name: Ubuntu 12 | Copy sites-available
   template: >
     src="{{ item }}"
     dest="/etc/nginx/sites-available/{{ item | basename }}"
@@ -61,7 +61,7 @@
   notify: restart nginx
   tags: config
 
-- name: Ubuntu 14 | Create symlink from sites-available to sites-enabled
+- name: Ubuntu 12 | Create symlink from sites-available to sites-enabled
   file: >
    src="/etc/nginx/sites-available/{{ item | basename }}"
    dest="/etc/nginx/sites-enabled/{{ item | basename }}"
@@ -71,15 +71,15 @@
   notify: restart nginx
   tags: config
 
-- name: Ubuntu 14 | Modules Available Location
+- name: Ubuntu 12 | Modules Available Location
   debug: msg="{{ nginx_sites_available_dir }}"
   when: nginx_modules_available_dir is defined
 
-#- name: Ubuntu 14 | Conf.d source
+#- name: Ubuntu 12 | Conf.d source
 #  debug: msg="{{ nginx_confd_dir }}"
 #  when: nginx_confd_dir is defined
 
-- name: Ubuntu 14 | Copy conf.d config files from local directory
+- name: Ubuntu 12 | Copy conf.d config files from local directory
   copy: >
    src="{{ item }}"
    dest="/etc/nginx/conf.d/{{ item | basename }}"
@@ -88,7 +88,7 @@
   when: nginx_confd_dir is defined
   tags: config
 
-- name: Ubuntu 14 | Create Directories for SSL Certs
+- name: Ubuntu 12 | Create Directories for SSL Certs
   file: >
    path={{item}}
    state=directory
@@ -99,7 +99,7 @@
   when: nginx_ssl_keys is defined
   tags: config
 
-- name: Ubuntu 14 | Copy SSL Keys
+- name: Ubuntu 12 | Copy SSL Keys
   copy: >
    src={{item}}
    dest=/etc/nginx/ssl/key/{{item|basename}}
@@ -109,7 +109,7 @@
   when: nginx_ssl_keys is defined
   tags: config
 
-- name: Ubuntu 14 | Copy SSL Certs
+- name: Ubuntu 12 | Copy SSL Certs
   copy: >
    src={{item}}
    dest=/etc/nginx/ssl/crt/{{item|basename}}
