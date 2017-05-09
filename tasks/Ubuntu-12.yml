@@ -1,0 +1,120 @@
+---
+- name: Ubuntu 14 | Make sure the ansible required dependencies are installed
+  apt: >
+    pkg=python-pycurl
+    update_cache=yes
+    state=latest
+  tags: install
+
+- name: Ubuntu 14 | Add the nginx PPA repository
+  apt_repository: >
+    repo=ppa:nginx/stable
+  tags: install
+
+- name: Ubuntu 14 | Install Nginx
+  apt: >
+    pkg=nginx
+    update_cache=yes
+    state=latest
+  tags: install
+
+- name: Ubuntu 14 | Clean sites-enabled directory
+  file: >
+   path=/etc/nginx/sites-enabled/
+   state=absent
+  notify: restart nginx
+  when: nginx_sites_avilable_dir is defined
+  tags: config
+
+- name: Ubuntu 14 | Clean sites-available directory
+  file: >
+   path=/etc/nginx/sites-available/
+   state=absent
+  notify: restart nginx
+  when: nginx_sites_available_dir is defined
+  tags: config
+
+- name: Ubuntu 14 | Create the main configuration file
+  copy: >
+   src="{{ nginx_conf }}"
+   dest=/etc/nginx/nginx.conf
+   owner=root group=root mode=0644
+  when: nginx_conf is defined
+  notify: restart nginx
+  tags: config
+
+- name: Ubuntu 14 | Create Nginx directories
+  file: 
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - /etc/nginx/sites-available
+    - /etc/nginx/sites-enabled
+
+- name: Ubuntu 14 | Copy sites-available
+  template: >
+    src="{{ item }}"
+    dest="/etc/nginx/sites-available/{{ item | basename }}"
+    owner=root group=root mode=0644
+  with_fileglob: "{{ nginx_sites_available_dir }}/*"
+  when: nginx_sites_available_dir is defined
+  notify: restart nginx
+  tags: config
+
+- name: Ubuntu 14 | Create symlink from sites-available to sites-enabled
+  file: >
+   src="/etc/nginx/sites-available/{{ item | basename }}"
+   dest="/etc/nginx/sites-enabled/{{ item | basename }}"
+   state=link
+  with_fileglob: "{{ nginx_sites_available_dir }}/*"
+  when: nginx_sites_available_dir is defined
+  notify: restart nginx
+  tags: config
+
+- name: Ubuntu 14 | Modules Available Location
+  debug: msg="{{ nginx_sites_available_dir }}"
+  when: nginx_modules_available_dir is defined
+
+#- name: Ubuntu 14 | Conf.d source
+#  debug: msg="{{ nginx_confd_dir }}"
+#  when: nginx_confd_dir is defined
+
+- name: Ubuntu 14 | Copy conf.d config files from local directory
+  copy: >
+   src="{{ item }}"
+   dest="/etc/nginx/conf.d/{{ item | basename }}"
+  with_fileglob: "{{ nginx_confd_dir }}/*.conf"
+  notify: restart nginx
+  when: nginx_confd_dir is defined
+  tags: config
+
+- name: Ubuntu 14 | Create Directories for SSL Certs
+  file: >
+   path={{item}}
+   state=directory
+   owner=root group=root mode=0644
+  with_items:
+   - /etc/nginx/ssl/key
+   - /etc/nginx/ssl/crt
+  when: nginx_ssl_keys is defined
+  tags: config
+
+- name: Ubuntu 14 | Copy SSL Keys
+  copy: >
+   src={{item}}
+   dest=/etc/nginx/ssl/key/{{item|basename}}
+   owner=root group=root mode=0644
+  with_items: "{{ nginx_ssl_keys | default([]) }}"
+  notify: restart nginx
+  when: nginx_ssl_keys is defined
+  tags: config
+
+- name: Ubuntu 14 | Copy SSL Certs
+  copy: >
+   src={{item}}
+   dest=/etc/nginx/ssl/crt/{{item|basename}}
+   owner=root group=root mode=0644
+  with_items: "{{ nginx_ssl_crts | default([]) }}"
+  notify: restart nginx
+  when: nginx_ssl_crts is defined
+  tags: config
