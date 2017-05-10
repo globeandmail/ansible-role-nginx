@@ -1,25 +1,25 @@
 ---
 - name: Ubuntu 12 | Make sure the ansible required dependencies are installed
-  apt: >
+  apt: 
     pkg=python-pycurl
     update_cache=yes
     state=latest
   tags: install
 
 - name: Ubuntu 12 | Add the nginx PPA repository
-  apt_repository: >
+  apt_repository: 
     repo=ppa:nginx/stable
   tags: install
 
 - name: Ubuntu 12 | Install Nginx
-  apt: >
+  apt: 
     pkg=nginx
     update_cache=yes
     state=latest
   tags: install
 
 - name: Ubuntu 12 | Clean sites-enabled directory
-  file: >
+  file: 
    path=/etc/nginx/sites-enabled/
    state=absent
   notify: restart nginx
@@ -27,7 +27,7 @@
   tags: config
 
 - name: Ubuntu 12 | Clean sites-available directory
-  file: >
+  file: 
    path=/etc/nginx/sites-available/
    state=absent
   notify: restart nginx
@@ -35,7 +35,7 @@
   tags: config
 
 - name: Ubuntu 12 | Create the main configuration file
-  copy: >
+  copy: 
    src="{{ nginx_conf }}"
    dest=/etc/nginx/nginx.conf
    owner=root group=root mode=0644
@@ -52,7 +52,7 @@
     - /etc/nginx/sites-enabled
 
 - name: Ubuntu 12 | Copy sites-available
-  template: >
+  template: 
     src="{{ item }}"
     dest="/etc/nginx/sites-available/{{ item | basename }}"
     owner=root group=root mode=0644
@@ -62,7 +62,7 @@
   tags: config
 
 - name: Ubuntu 12 | Create symlink from sites-available to sites-enabled
-  file: >
+  file: 
    src="/etc/nginx/sites-available/{{ item | basename }}"
    dest="/etc/nginx/sites-enabled/{{ item | basename }}"
    state=link
@@ -80,7 +80,7 @@
 #  when: nginx_confd_dir is defined
 
 - name: Ubuntu 12 | Copy conf.d config files from local directory
-  copy: >
+  copy: 
    src="{{ item }}"
    dest="/etc/nginx/conf.d/{{ item | basename }}"
   with_fileglob: "{{ nginx_confd_dir }}/*.conf"
@@ -89,7 +89,7 @@
   tags: config
 
 - name: Ubuntu 12 | Create Directories for SSL Certs
-  file: >
+  file: 
    path={{item}}
    state=directory
    owner=root group=root mode=0644
@@ -100,7 +100,7 @@
   tags: config
 
 - name: Ubuntu 12 | Copy SSL Keys
-  copy: >
+  copy: 
    src={{item}}
    dest=/etc/nginx/ssl/key/{{item|basename}}
    owner=root group=root mode=0644
@@ -110,7 +110,7 @@
   tags: config
 
 - name: Ubuntu 12 | Copy SSL Certs
-  copy: >
+  copy: 
    src={{item}}
    dest=/etc/nginx/ssl/crt/{{item|basename}}
    owner=root group=root mode=0644
