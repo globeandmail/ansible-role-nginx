@@ -13,7 +13,7 @@ group_vars/dev.yml
 ```bash
 nginx_conf: group_files/<hostgroup>/nginx/nginx.conf
 nginx_confd_dir: group_files/<hostgroup>/nginx/conf.d
-nginx_sites_dir: group_files/<hostgroup>/nginx/sites-available
+nginx_sites_available_dir: group_files/<hostgroup>/nginx/sites-available
 nginx_ssl_keys: group_files/<hostgroup>/nginx/ssl/key/
 nginx_ssl_crts: group_files/<hostgroup>/nginx/ssl/crt/
 ```
