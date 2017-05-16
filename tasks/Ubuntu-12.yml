@@ -18,26 +18,31 @@
     state=latest
   tags: install
 
-- name: Ubuntu 12 | Clean sites-enabled directory
-  file: 
-   path=/etc/nginx/sites-enabled/
-   state=absent
-  notify: restart nginx
-  when: nginx_sites_avilable_dir is defined
-  tags: config
+#- name: Ubuntu 12 | Clean sites-enabled directory
+#  file: 
+#   path=/etc/nginx/sites-enabled/
+#   state=absent
+#  notify: restart nginx
+#  when: nginx_sites_avilable_dir is defined
+#  tags: config
 
-- name: Ubuntu 12 | Clean sites-available directory
-  file: 
-   path=/etc/nginx/sites-available/
-   state=absent
-  notify: restart nginx
-  when: nginx_sites_available_dir is defined
-  tags: config
+#- name: Ubuntu 12 | Clean sites-available directory
+#  file: 
+#   path=/etc/nginx/sites-available/
+#   state=absent
+#  notify: restart nginx
+#  when: nginx_sites_available_dir is defined
+#  tags: config
+
+- name: Ubuntu 12 | nginx_conf variable/value
+  debug: msg="{{ nginx_conf }}"
+  when: nginx_conf is defined
+  tags: debug
 
 - name: Ubuntu 12 | Create the main configuration file
   copy: 
    src="{{ nginx_conf }}"
-   dest=/etc/nginx/nginx.conf
+   dest=/etc/nginx/nginx.conf-ansible
    owner=root group=root mode=0644
   when: nginx_conf is defined
   notify: restart nginx
@@ -50,7 +55,13 @@
   with_items:
     - /etc/nginx/sites-available
     - /etc/nginx/sites-enabled
+  tags: config
 
+- name: Ubuntu 12 | nginx_sites_available_dir 
+  debug: msg="{{ nginx_sites_available_dir }}"
+  when: nginx_sites_available_dir is defined
+  tags: debug
+  
 - name: Ubuntu 12 | Copy sites-available
   template: 
     src="{{ item }}"
@@ -74,10 +85,12 @@
 - name: Ubuntu 12 | Modules Available Location
   debug: msg="{{ nginx_sites_available_dir }}"
   when: nginx_modules_available_dir is defined
+  tags: debug
 
 #- name: Ubuntu 12 | Conf.d source
 #  debug: msg="{{ nginx_confd_dir }}"
 #  when: nginx_confd_dir is defined
+#  tags: config
 
 - name: Ubuntu 12 | Copy conf.d config files from local directory
   copy: 
