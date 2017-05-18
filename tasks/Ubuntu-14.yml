@@ -18,26 +18,26 @@
     state=latest
   tags: install
 
-- name: Ubuntu 14 | Clean sites-enabled directory
-  file: >
-   path=/etc/nginx/sites-enabled/
-   state=absent
-  notify: restart nginx
-  when: nginx_sites_avilable_dir is defined
-  tags: config
+#- name: Ubuntu 14 | Clean sites-enabled directory
+#  file: >
+#   path=/etc/nginx/sites-enabled/
+#   state=absent
+#  notify: restart nginx
+#  when: nginx_sites_avilable_dir is defined
+#  tags: config
 
-- name: Ubuntu 14 | Clean sites-available directory
-  file: >
-   path=/etc/nginx/sites-available/
-   state=absent
-  notify: restart nginx
-  when: nginx_sites_available_dir is defined
-  tags: config
+#- name: Ubuntu 14 | Clean sites-available directory
+#  file: >
+#   path=/etc/nginx/sites-available/
+#   state=absent
+#  notify: restart nginx
+#  when: nginx_sites_available_dir is defined
+#  tags: config
 
 - name: Ubuntu 14 | Create the main configuration file
   copy: >
    src="{{ nginx_conf }}"
-   dest=/etc/nginx/nginx.conf
+   dest=/etc/nginx/nginx.conf-ansible
    owner=root group=root mode=0644
   when: nginx_conf is defined
   notify: restart nginx
@@ -74,10 +74,12 @@
 - name: Ubuntu 14 | Modules Available Location
   debug: msg="{{ nginx_sites_available_dir }}"
   when: nginx_modules_available_dir is defined
+  tags: debug
 
-#- name: Ubuntu 14 | Conf.d source
-#  debug: msg="{{ nginx_confd_dir }}"
-#  when: nginx_confd_dir is defined
+- name: Ubuntu 14 | Conf.d source
+  debug: msg="{{ nginx_confd_dir }}"
+  when: nginx_confd_dir is defined
+  tags: debug
 
 - name: Ubuntu 14 | Copy conf.d config files from local directory
   copy: >
