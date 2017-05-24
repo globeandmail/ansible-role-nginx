@@ -1,8 +1,5 @@
 ---
-#- name: restart nginx
-#  service: >
-#   name=nginx
-#   state=restarted
-
 - name: restart nginx
-  debug: msg="This would've restarted NGINX"
+  service: >
+   name=nginx
+   state=restarted

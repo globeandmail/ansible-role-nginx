@@ -18,26 +18,26 @@
     state=latest
   tags: install
 
-#- name: Ubuntu 14 | Clean sites-enabled directory
-#  file: >
-#   path=/etc/nginx/sites-enabled/
-#   state=absent
-#  notify: restart nginx
-#  when: nginx_sites_avilable_dir is defined
-#  tags: config
+- name: Ubuntu 14 | Clean sites-enabled directory
+  file: >
+   path=/etc/nginx/sites-enabled/
+   state=absent
+  notify: restart nginx
+  when: nginx_sites_avilable_dir is defined
+  tags: config
 
-#- name: Ubuntu 14 | Clean sites-available directory
-#  file: >
-#   path=/etc/nginx/sites-available/
-#   state=absent
-#  notify: restart nginx
-#  when: nginx_sites_available_dir is defined
-#  tags: config
+- name: Ubuntu 14 | Clean sites-available directory
+  file: >
+   path=/etc/nginx/sites-available/
+   state=absent
+  notify: restart nginx
+  when: nginx_sites_available_dir is defined
+  tags: config
 
 - name: Ubuntu 14 | Create the main configuration file
   copy: >
    src="{{ nginx_conf }}"
-   dest=/etc/nginx/nginx.conf-ansible
+   dest=/etc/nginx/nginx.conf
    owner=root group=root mode=0644
   when: nginx_conf is defined
   notify: restart nginx
