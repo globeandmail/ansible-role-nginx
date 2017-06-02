@@ -23,7 +23,7 @@
    path=/etc/nginx/sites-enabled/
    state=absent
   notify: restart nginx
-  when: nginx_sites_avilable_dir is defined
+  when: nginx_sites_available_dir is defined
   tags: config
 
 - name: Ubuntu 14 | Clean sites-available directory
