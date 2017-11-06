@@ -18,17 +18,17 @@
     state=latest
   tags: install
 
-- name: Ubuntu 12 | Clean sites-enabled directory
+- name: Ubuntu 12 | remove default vhost (symlink)
   file: 
-   path=/etc/nginx/sites-enabled/
+   path=/etc/nginx/sites-enabled/default
    state=absent
   notify: restart nginx
   when: nginx_sites_available_dir is defined
   tags: config
 
-- name: Ubuntu 12 | Clean sites-available directory
+- name: Ubuntu 12 | remove default vhost
   file: 
-   path=/etc/nginx/sites-available/
+   path=/etc/nginx/sites-available/default
    state=absent
   notify: restart nginx
   when: nginx_sites_available_dir is defined
