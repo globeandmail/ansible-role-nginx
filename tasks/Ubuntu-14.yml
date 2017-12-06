@@ -121,16 +121,16 @@
   when: nginx_ssl_crts is defined
   tags: config
 
-- name: Make sure python-passlibe is installed to be used for htpasswd module
+- name: Make sure we can use htpasswd module
   apt: "pkg=python-passlib state=installed"
 
 # Add a user to a password file and ensure permissions are set
 - htpasswd:
     path: /etc/nginx/.auth_users
-    name: "{{ item.name }}"
-    password: "{{ item.pass }}"
+    name: item.name
+    password: item.pass
     owner: root
-    group: www
+    group: www-data
     mode: 0640
   with_items:
     - "{{ auth_users }}"
