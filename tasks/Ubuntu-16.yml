@@ -1,4 +1,10 @@
 ---
+- name: Confirm www exists
+  user:
+    name: www
+    comment: www user
+    createhome: no
+
 - name: Ubuntu 16 | Make sure the ansible required dependencies are installed
   apt: >
     pkg=python-pycurl
@@ -9,6 +15,7 @@
 - name: Ubuntu 16 | Add the nginx PPA repository
   apt_repository: >
     repo=ppa:nginx/stable
+    validate_certs=False
   tags: install
 
 - name: Ubuntu 16 | Install Nginx
@@ -88,6 +95,17 @@
   with_fileglob: "{{ nginx_confd_dir }}/*.conf"
   notify: restart nginx
   when: nginx_confd_dir is defined
+  tags: config
+
+- name: Ubuntu 16 | Copy htpasswd file(s) from local directory
+  copy: >
+   src="{{ item.src }}"
+   dest="{{ item.dest }}"
+  with_items: 
+    - src: "{{ nginx_auth_dir }}/htpasswd"
+      dest: /etc/nginx/.htpasswd
+  notify: restart nginx
+  when: nginx_auth_dir is defined
   tags: config
 
 - name: Ubuntu 16 | Create Directories for SSL Certs
