@@ -101,13 +101,13 @@
   copy: >
    src="{{ item.src }}"
    dest="{{ item.dest }}"
-  with_items: 
-    - src: "{{ nginx_auth_dir }}/htpasswd"
-      dest: /etc/nginx/.htpasswd
+  with_items:
+    - src: "{{ nginx_htpasswd_file }}"
+      dest: "/etc/nginx/{{ nginx_htpasswd_file | basename }}"
   notify: restart nginx
-  when: nginx_auth_dir is defined
+  when: nginx_htpasswd_file is defined
   tags: config
-
+  
 - name: Ubuntu 16 | Create Directories for SSL Certs
   file: >
    path={{item}}
