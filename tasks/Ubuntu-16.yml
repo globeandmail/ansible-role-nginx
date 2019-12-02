@@ -103,7 +103,7 @@
    dest="{{ item.dest }}"
   with_items:
     - src: "{{ nginx_htpasswd_file }}"
-      dest: "/etc/nginx/{{ nginx_htpasswd_file | basename }}"
+      dest: "/etc/nginx/.{{ nginx_htpasswd_file | basename }}"
   notify: restart nginx
   when: nginx_htpasswd_file is defined
   tags: config
