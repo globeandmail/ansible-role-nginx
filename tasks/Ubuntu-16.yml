@@ -111,9 +111,9 @@
 - name: Ubuntu 16 | Copy Systemd service file
   copy:
     src: "{{ nginx_systemd }}"
-    path: "/etc/systemd/system/{{ nginx_systemd | basename }}"
+    dest: "/etc/systemd/system/{{ nginx_systemd | basename }}"
   notify: daemon nginx
-      
+
 - name: Ubuntu 16 | Create Directories for SSL Certs
   file: >
    path={{item}}
