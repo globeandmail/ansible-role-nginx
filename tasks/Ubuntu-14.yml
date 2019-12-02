@@ -1,4 +1,6 @@
 ---
+### This config has drifted a bit compared to Ubuntu-16.yml.
+
 - name: Confirm www exists
   user:
     name: www
