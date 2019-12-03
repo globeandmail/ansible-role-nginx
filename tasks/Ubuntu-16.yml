@@ -97,19 +97,10 @@
   when: nginx_confd_dir is defined
   tags: config
 
-#- name: Ubuntu 16 | Copy htpasswd file(s) from local directory
-#  copy: >
-#   src="{{ item.src }}"
-#   dest="{{ item.dest }}"
-#  with_items:
-#    - src: "{{ nginx_htpasswd_file }}"
-#      dest: "/etc/nginx/.{{ nginx_htpasswd_file | basename }}"
-#  notify: restart nginx
-#  when: nginx_htpasswd_file is defined
-#  tags: config
-
 - name: Ubuntu-16 | Install python-passlib for htpasswd if required
-  apt: "pkg=python-passlib state=installed"
+  apt:
+    name: python-passlib 
+    state: present
   when: auth_users is defined
 
 # Add a user to a password file and ensure permissions are set
