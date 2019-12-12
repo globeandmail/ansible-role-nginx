@@ -106,7 +106,7 @@
 # Add a user to a password file and ensure permissions are set
 - name: Ubuntu-16 | Create users based off of auth_users variable
   htpasswd:
-    path: /etc/nginx/.auth_users
+    path: /etc/nginx/auth_users
     name: "{{ item.user }}"
     password: "{{ item.pass }}"
     owner: root
