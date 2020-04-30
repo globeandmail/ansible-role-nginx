@@ -7,7 +7,7 @@
 
 - name: Ubuntu 18 | Make sure the ansible required dependencies are installed
   apt: >
-    pkg=python-pycurl
+    pkg=python3-pycurl
     update_cache=yes
     state=latest
   tags: install
@@ -97,9 +97,9 @@
   when: nginx_confd_dir is defined
   tags: config
 
-- name: Ubuntu 18 | Install python-passlib for htpasswd if required
+- name: Ubuntu 18 | Install python3-passlib for htpasswd if required
   apt:
-    name: python-passlib 
+    name: python3-passlib
     state: present
   when: auth_users is defined
 
