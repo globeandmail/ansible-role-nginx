@@ -6,46 +6,48 @@
     createhome: no
 
 - name: Ubuntu 18 | Make sure the ansible required dependencies are installed
-  apt: >
-    pkg=python3-pycurl
-    update_cache=yes
-    state=latest
+  apt:
+    pkg: python3-pycurl
+    update_cache: yes
+    state: latest
   tags: install
 
 - name: Ubuntu 18 | Add the nginx PPA repository
-  apt_repository: >
-    repo=ppa:nginx/stable
-    validate_certs=False
+  apt_repository:
+    repo: ppa:nginx/stable
+    validate_certs: False
   tags: install
 
 - name: Ubuntu 18 | Install Nginx
-  apt: >
-    pkg=nginx
-    update_cache=yes
-    state=latest
+  apt:
+    pkg: nginx
+    update_cache: yes
+    state: latest
   tags: install
 
 - name: Ubuntu 18 | remove default vhost (symlink) 
-  file: >
-   path=/etc/nginx/sites-enabled/default
-   state=absent
+  file:
+   path: /etc/nginx/sites-enabled/default
+   state: absent
   notify: restart nginx
   when: nginx_sites_available_dir is defined
   tags: config
 
 - name: Ubuntu 18 | remove default vhost
-  file: >
-   path=/etc/nginx/sites-available/default
-   state=absent
+  file:
+   path: /etc/nginx/sites-available/default
+   state: absent
   notify: restart nginx
   when: nginx_sites_available_dir is defined
   tags: config
 
 - name: Ubuntu 18 | Create the main configuration file
-  copy: >
-   src="{{ nginx_conf }}"
-   dest=/etc/nginx/nginx.conf
-   owner=root group=root mode=0644
+  copy:
+   src: "{{ nginx_conf }}"
+   dest: /etc/nginx/nginx.conf
+   owner: root
+   group: root
+   mode: 0644
   when: nginx_conf is defined
   notify: restart nginx
   tags: config
@@ -59,20 +61,22 @@
     - /etc/nginx/sites-enabled
 
 - name: Ubuntu 18 | Copy sites-available
-  template: >
-    src="{{ item }}"
-    dest="/etc/nginx/sites-available/{{ item | basename }}"
-    owner=root group=root mode=0644
+  template:
+    src: "{{ item }}"
+    dest: "/etc/nginx/sites-available/{{ item | basename }}"
+    owner: root
+    group: root
+    mode: 0644
   with_fileglob: "{{ nginx_sites_available_dir }}/*"
   when: nginx_sites_available_dir is defined
   notify: restart nginx
   tags: config
 
 - name: Ubuntu 18 | Create symlink from sites-available to sites-enabled
-  file: >
-   src="/etc/nginx/sites-available/{{ item | basename }}"
-   dest="/etc/nginx/sites-enabled/{{ item | basename }}"
-   state=link
+  file:
+   src: "/etc/nginx/sites-available/{{ item | basename }}"
+   dest: "/etc/nginx/sites-enabled/{{ item | basename }}"
+   state: link
   with_fileglob: "{{ nginx_sites_available_dir }}/*"
   when: nginx_sites_available_dir is defined
   notify: restart nginx
@@ -89,9 +93,9 @@
   tags: debug
 
 - name: Ubuntu 18 | Copy conf.d config files from local directory
-  copy: >
-   src="{{ item }}"
-   dest="/etc/nginx/conf.d/{{ item | basename }}"
+  copy:
+   src: "{{ item }}"
+   dest: "/etc/nginx/conf.d/{{ item | basename }}"
   with_fileglob: "{{ nginx_confd_dir }}/*.conf"
   notify: restart nginx
   when: nginx_confd_dir is defined
@@ -124,10 +128,12 @@
   notify: daemon nginx
 
 - name: Ubuntu 18 | Create Directories for SSL Certs
-  file: >
-   path={{item}}
-   state=directory
-   owner=root group=root mode=0644
+  file:
+   path: "{{item}}"
+   state: directory
+   owner: root
+   group: root
+   mode: 0644
   with_items:
    - /etc/nginx/ssl/key
    - /etc/nginx/ssl/crt
@@ -135,20 +141,24 @@
   tags: config
 
 - name: Ubuntu 18 | Copy SSL Keys
-  copy: >
-   src={{item}}
-   dest=/etc/nginx/ssl/key/{{item|basename}}
-   owner=root group=root mode=0644
+  copy:
+   src: "{{item}}"
+   dest: /etc/nginx/ssl/key/{{item|basename}}
+   owner: root
+   group: root
+   mode: 0644
   with_items: "{{ nginx_ssl_keys | default([]) }}"
   notify: restart nginx
   when: nginx_ssl_keys is defined
   tags: config
 
 - name: Ubuntu 18 | Copy SSL Certs
-  copy: >
-   src={{item}}
-   dest=/etc/nginx/ssl/crt/{{item|basename}}
-   owner=root group=root mode=0644
+  copy:
+   src: "{{item}}"
+   dest: /etc/nginx/ssl/crt/{{item|basename}}
+   owner: root
+   group: root
+   mode: 0644
   with_items: "{{ nginx_ssl_crts | default([]) }}"
   notify: restart nginx
   when: nginx_ssl_crts is defined
